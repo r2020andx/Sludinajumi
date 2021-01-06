@@ -18,7 +18,7 @@
             @php
             // Šo vajag pārcelt uz AdController
             $photosLocation = $ad->photos;
-            $photos = array_diff(scandir('./'.$photosLocation), array('..', '.')); // Noņem Linux tipa punktus
+            $photos = array_diff(scandir('./'.$photosLocation), array('..', '.')); // Noņem Linux tipa punktus folderiem
             @endphp
             @foreach ($photos as $photo)
                 <ul>
