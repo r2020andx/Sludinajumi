@@ -66,8 +66,8 @@
         </main>
         <footer>
             <hr>
-            <a href="https://github.com/ray2020andx/auto_slud" target="_blank">
-            github.com/ray2020andx/auto_slud
+            <a href="https://github.com/ray2020andx/sludinajumi" target="_blank">
+            github.com/ray2020andx/Sludinajumi
             </a></p>
         </footer>
     </div>
