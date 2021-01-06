@@ -66,7 +66,7 @@
         </main>
         <footer>
             <hr>
-            &copy;
+            &copy; 2021
         </footer>
     </div>
 
