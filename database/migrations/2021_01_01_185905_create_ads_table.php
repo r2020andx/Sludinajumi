@@ -24,6 +24,7 @@ class CreateAdsTable extends Migration
             $table->string('street');
 
             $table->integer('owner');       // Kas ir sludinājuma autors
+            $table->string('photos')->nullable();       // Kur atrodas bildes
             $table->integer('views');
             $table->integer('rating');
             

@@ -14,7 +14,20 @@
                 <div>{{ $ad->city }}</div>
             </div>
             <div class="col-6">
-                <img class="img-fluid" src="https://aosa.org/wp-content/uploads/2019/04/image-placeholder-350x350.png">
+                <div>
+            @php
+            // Šo vajag pārcelt uz AdController
+            $photosLocation = $ad->photos;
+            $photos = array_diff(scandir('./'.$photosLocation), array('..', '.')); // Noņem Linux tipa punktus
+            @endphp
+            @foreach ($photos as $photo)
+                <ul>
+                    <li>
+                        <img width="200px" src="/{{ $photosLocation }}/{{ $photo }}">
+                    </li>
+                </ul>
+            @endforeach
+                </div>
             </div>
         </div>
         @auth
