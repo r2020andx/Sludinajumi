@@ -66,8 +66,9 @@
         </main>
         <footer>
             <hr>
-            <p>&copy; 2021</p>
-            <p><a href="https://github.com/ray2020andx/auto_slud" target="_blank"></a></p>
+            <a href="https://github.com/ray2020andx/auto_slud" target="_blank">
+            github.com/ray2020andx/auto_slud
+            </a></p>
         </footer>
     </div>
 
