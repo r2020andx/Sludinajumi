@@ -1,11 +1,9 @@
 @extends('layouts.main')
 @section('content')
 
-@foreach($ad as $ad)
-
-    <div class="p-3 border">
+<div class="p-3 border">
         <div class="row">
-            <div class="col-6">
+            <div class="col-4">
                 <div>{{ $ad->make }}</div>
                 <div>{{ $ad->model }}</div>
                 <div>{{ $ad->year }}</div>
@@ -13,20 +11,13 @@
                 <div>{{ $ad->street }}</div>
                 <div>{{ $ad->city }}</div>
             </div>
-            <div class="col-6">
-                <div>
-            @php
-            // Šo vajag pārcelt uz AdController
-            $photosLocation = $ad->photos;
-            $photos = array_diff(scandir('./'.$photosLocation), array('..', '.')); // Noņem Linux tipa punktus folderiem
-            @endphp
-            @foreach ($photos as $photo)
-                <ul>
-                    <li>
+            <div class="col-8">
+                <div class="row">
+                 @foreach ($photos as $photo)
+                    <div class="col-4 m-2">
                         <img width="200px" src="/{{ $photosLocation }}/{{ $photo }}">
-                    </li>
-                </ul>
-            @endforeach
+                    </div>
+                @endforeach
                 </div>
             </div>
         </div>
@@ -66,7 +57,4 @@
             </div>
         </div>
     </div>
-
-@endforeach
-
 @endsection

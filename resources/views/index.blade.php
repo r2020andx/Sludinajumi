@@ -22,7 +22,7 @@
                     <div class="col">
                         <a href="/ads/{{ $ad->id }}">
                             <img class="img-fluid"
-                                src="https://aosa.org/wp-content/uploads/2019/04/image-placeholder-350x350.png">
+                                src="$ad->photosFolder">
                         </a>
                     </div>
                 </div>

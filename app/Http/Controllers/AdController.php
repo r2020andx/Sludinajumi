@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ad;
-use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Facades\Auth;
+
 
 class AdController extends Controller
 {
@@ -27,8 +27,18 @@ class AdController extends Controller
     }
 
     public function show($id) {
-        $ad = Ad::where('id', $id)->get();
-        return view('show', ['id'=> $id, 'ad' => $ad]);
+        $ad = Ad::where('id', $id)->first();
+
+        $photosLocation = $ad->photosFolder;
+        $photos = array_diff(scandir('./'.$photosLocation), array('..', '.')); // Noņem Linux tipa punktus folderiem
+
+        return view('show', 
+            [
+                'id'=> $id,
+                'ad' => $ad,
+                'photosLocation' => $photosLocation,
+                'photos' => $photos
+            ]);
     }
 
     public function create() {
@@ -45,11 +55,18 @@ class AdController extends Controller
         $ad->street = $request->street;
         $ad->city = $request->city;
         $ad->owner = Auth::id();        // Sludinājuma autors
-        $ad->photos = 'img/ads/' . uniqid();
+        $ad->photosFolder = 'img/ads/' . uniqid();
         $ad->views = 0;
         $ad->rating = 0;
+        
+        mkdir($ad->photosFolder);
+        $photos = $_FILES['photos']['tmp_name'];
+        foreach ($photos as $photo) {
+            move_uploaded_file($photo, realpath($ad->photosFolder).'\\'. basename($photo).'.jpg');     
+        }
+       
         $ad->save();
-        mkdir($ad->photos);
+        
         $message = "Pievienots";
         return redirect('/ads')->with(['message' => $message]);
     }
