@@ -45,10 +45,11 @@ class AdController extends Controller
         $ad->street = $request->street;
         $ad->city = $request->city;
         $ad->owner = Auth::id();        // Sludinājuma autors
-        $ad->photos = '/img/ads/' . uniqid();
+        $ad->photos = 'img/ads/' . uniqid();
         $ad->views = 0;
         $ad->rating = 0;
         $ad->save();
+        mkdir($ad->photos);
         $message = "Pievienots";
         return redirect('/ads')->with(['message' => $message]);
     }
