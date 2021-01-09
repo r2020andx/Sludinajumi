@@ -15,7 +15,8 @@ class AdController extends Controller
             if ($ads->isEmpty()) {
                 $noAdsMessage = "Nav neviena sludinājuma";
             }
-        return view('index', ['ads' => $ads, 'noAdsMessage' => $noAdsMessage]);
+            
+            return view('index', ['ads' => $ads, 'noAdsMessage' => $noAdsMessage]);
     }
     public function indexMyAds() {
             $ads = Ad::where('owner', Auth::id())->get();
@@ -28,7 +29,6 @@ class AdController extends Controller
 
     public function show($id) {
         $ad = Ad::where('id', $id)->first();
-
         $photosLocation = $ad->photosFolder;
         $photos = array_diff(scandir('./'.$photosLocation), array('..', '.')); // Noņem Linux tipa punktus folderiem
 

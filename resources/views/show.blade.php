@@ -3,31 +3,55 @@
 
 <div class="p-3 border">
         <div class="row">
-            <div class="col-4">
-                <div>{{ $ad->make }}</div>
-                <div>{{ $ad->model }}</div>
-                <div>{{ $ad->year }}</div>
-                <div>{{ $ad->price }}</div>
-                <div>{{ $ad->street }}</div>
-                <div>{{ $ad->city }}</div>
+            <div class="col">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>Marka</th>
+                            <td>{{ $ad->make }}</td>
+                        </tr>
+                        <tr>
+                            <th>Modelis</th>
+                            <td>{{ $ad->model }}</td>
+                        </tr>
+                        <tr>
+                            <th>Gads</th>
+                            <td>{{ $ad->year }}</td>
+                        </tr>
+                        <tr>
+                            <th>Cena</th>
+                            <td>{{ $ad->price }}</td>
+                        </tr>
+                        <tr>
+                            <th>Adrese</th>
+                            <td>{{ $ad->street }}</td>
+                        </tr>
+                        <tr>
+                            <th>Pilsēta</th>
+                            <td>{{ $ad->city }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="col-8">
-                <div class="row">
-                 @foreach ($photos as $photo)
-                    <div class="col-4 m-2">
-                        <img width="200px" src="/{{ $photosLocation }}/{{ $photo }}">
+            <div class="col">
+                    <div class="ads gallery">
+                        <div class="row">    
+                            @foreach ($photos as $photo)
+                            @php
+                            $photoPath = "/$photosLocation/$photo";
+                            @endphp
+                            <div class="col-4 m-2">
+                            <a href="{{ $photoPath }}" data-caption="{{$ad->make}} {{$ad->model}}"><img class="preview" src="{{ $photoPath }}"></a>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
-                @endforeach
-                </div>
             </div>
-        </div>
         @auth
         @if ($ad->owner == Auth::id()) <!-- Ja sludinājums pieder lietotājam -->
-        <div class="row">
-            <div class="col">
-                <a class="btn btn-warning" href="/ads/{{ $id }}/edit">Rediģēt</a>
-                <a class="btn btn-danger" href="/ads/{{ $id }}/delete">Dzēst</a>
-            </div>
+        <div class="text-center m-3">
+                <a class="btn btn-lg btn-warning" href="/ads/{{ $id }}/edit">Rediģēt</a>
+                <a class="btn btn-lg btn-danger" href="/ads/{{ $id }}/delete">Dzēst</a>
         </div>
         @endif
         @endauth
@@ -57,4 +81,9 @@
             </div>
         </div>
     </div>
+    <script>
+        window.onload = function() {
+            baguetteBox.run('.ads')
+        }
+    </script>
 @endsection

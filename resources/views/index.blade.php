@@ -20,9 +20,11 @@
                         <div>{{ $ad->city }}</div>
                     </div>
                     <div class="col">
+                        @php
+                         $firstPhotoFile = "/" . $ad->photosFolder . "/" . scandir($ad->photosFolder)[2];
+                        @endphp
                         <a href="/ads/{{ $ad->id }}">
-                            <img class="img-fluid"
-                                src="$ad->photosFolder">
+                            <img class="preview" src=" {{ $firstPhotoFile }} ">
                         </a>
                     </div>
                 </div>
