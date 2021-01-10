@@ -1,7 +1,6 @@
 @extends('layouts.main')
 
 @section('content')
-<hr>
 <div class="row">
     @if ($noAdsMessage != "")
     <div class="display-2 text-center text-danger">

@@ -79,7 +79,7 @@
                 
             </div>
             </nav>
-        <main>
+        <main class="my-3">
             @php
                 $message = session('message');
             @endphp
