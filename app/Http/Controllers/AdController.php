@@ -81,7 +81,7 @@ class AdController extends Controller
                 move_uploaded_file($photo, realpath($ad->photosFolder).'\\'.basename($photo).'.jpg');
                 // Upload preview image
                 $smallPhoto = new ImageResize(realpath($ad->photosFolder).'\\'.basename($photo).'.jpg');
-                $smallPhoto->resizeToHeight(200, $allow_enlarge = TRUE);
+                $smallPhoto->resizeToHeight(200);
                 $smallPhoto->save(realpath($ad->photosFolder).'\\_preview\\'.basename($photo).'.jpg');
 
                 }
@@ -89,11 +89,11 @@ class AdController extends Controller
         $ad->save();
         
         $message = "Pievienots";
-        return redirect('/ads')->with(['message' => $message]);
+        return redirect('/ads/'.$ad->id)->with(['message' => $message]);
     }
 
     public function edit($id) {
-        $ad = Ad::where('id', $id)->get();
+        $ad = Ad::where('id', $id)->first();
         return view('edit', ['id' => $id, 'ad' => $ad]);
     }
 
