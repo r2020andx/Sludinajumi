@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ad;
+use Gumlet\ImageResize;
 use Illuminate\Support\Facades\Auth;
-
 
 class AdController extends Controller
 {
@@ -29,13 +28,27 @@ class AdController extends Controller
 
     public function show($id) {
         $ad = Ad::where('id', $id)->first();
+        // Geocoding - convert address to lat. & lang.
+        $geoCodeApiKey = "05537e2574534d6a9b1e66be98b638cc"; // OpenCage Geocoding API key
+        $geoCodeApiURI = "https://api.opencagedata.com/geocode/v1/json";
+        $geoCodeStreet = $ad->street;
+        $geoCodeCity = $ad->city;
+        $geoCodeAddress = urlencode("$geoCodeStreet $geoCodeCity");
+        $geoCodeQuery = "$geoCodeApiURI?q=$geoCodeAddress&pretty=1&key=$geoCodeApiKey";
+        $json = file_get_contents($geoCodeQuery);
+        $geoCodeData = json_decode($json);
+        $geoCodeDataLat = $geoCodeData->results[0]->geometry->lat;
+        $geoCodeDataLng = $geoCodeData->results[0]->geometry->lng;
+        // End geocoding
         $photosLocation = $ad->photosFolder;
-        $photos = array_diff(scandir('./'.$photosLocation), array('..', '.')); // Noņem Linux tipa punktus folderiem
+        $photos = array_diff(scandir('./'.$photosLocation), array('..', '.', '_preview')); // Noņem Linux tipa punktus folderiem
 
         return view('show', 
             [
                 'id'=> $id,
                 'ad' => $ad,
+                'geoLat' => $geoCodeDataLat,
+                'getLng' => $geoCodeDataLng,
                 'photosLocation' => $photosLocation,
                 'photos' => $photos
             ]);
@@ -59,12 +72,20 @@ class AdController extends Controller
         $ad->views = 0;
         $ad->rating = 0;
         
-        mkdir($ad->photosFolder);
+        mkdir($ad->photosFolder);               // Attēlu folderis
+        mkdir($ad->photosFolder.'/_preview');   // Mazo attēlu folderis
         $photos = $_FILES['photos']['tmp_name'];
         foreach ($photos as $photo) {
-            move_uploaded_file($photo, realpath($ad->photosFolder).'\\'. basename($photo).'.jpg');     
-        }
-       
+                
+                // Upload fullsize image
+                move_uploaded_file($photo, realpath($ad->photosFolder).'\\'.basename($photo).'.jpg');
+                // Upload preview image
+                $smallPhoto = new ImageResize(realpath($ad->photosFolder).'\\'.basename($photo).'.jpg');
+                $smallPhoto->resizeToHeight(200, $allow_enlarge = TRUE);
+                $smallPhoto->save(realpath($ad->photosFolder).'\\_preview\\'.basename($photo).'.jpg');
+
+                }
+         
         $ad->save();
         
         $message = "Pievienots";
@@ -93,7 +114,8 @@ class AdController extends Controller
     public function delete($id) {
         $ad = Ad::where('id', $id)->first();    
         if ($ad->owner == Auth::id()) {             // Ja pieder sludinājums
-            return view('delete', ['id' => $id]);   // Parādīt dzēšanas dialogu
+            return view('delete', [ 'id' => $id,
+                                    'ad' => $ad ]);   // Parādīt dzēšanas dialogu
         } else {
             $message = "Nav pieejas";
             return redirect('/ads/'.$id)->with(['id' => $id, 'ad' => $ad, 'message' => $message]);           // Citādi atgriezties

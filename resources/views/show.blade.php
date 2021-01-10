@@ -3,7 +3,7 @@
 
 <div class="p-3 border">
         <div class="row">
-            <div class="col">
+            <div class="col-lg">
                 <table class="table">
                     <tbody>
                         <tr>
@@ -32,58 +32,68 @@
                         </tr>
                     </tbody>
                 </table>
+                    @auth
+                    @if ($ad->owner == Auth::id()) <!-- Ja sludinājums pieder lietotājam -->
+                    <div class="text-center m-3">
+                            <a class="btn btn btn-warning" href="/ads/{{ $id }}/edit">Rediģēt</a>
+                            <a class="btn btn btn-danger" href="/ads/{{ $id }}/delete">Dzēst</a>
+                    </div>
+                    @endif
+                    @endauth
             </div>
-            <div class="col">
+            <div class="col-lg">
                     <div class="ads gallery">
                         <div class="row">    
                             @foreach ($photos as $photo)
                             @php
-                            $photoPath = "/$photosLocation/$photo";
+                            $photoPathFullSize = "/$photosLocation/$photo";
+                            $photoPathPreview = "/$photosLocation/_preview/$photo";
                             @endphp
-                            <div class="col-4 m-2">
-                            <a href="{{ $photoPath }}" data-caption="{{$ad->make}} {{$ad->model}}"><img class="preview" src="{{ $photoPath }}"></a>
+                            <div class="col-md-6 my-2">
+                                <div class="preview-container">
+                                  <a href="{{ $photoPathFullSize }}" data-caption="{{$ad->make}} {{$ad->model}}">
+                                    <img class="preview" src="{{ $photoPathPreview }}">
+                                  </a>
+                                </div>
                             </div>
                             @endforeach
                         </div>
                     </div>
             </div>
-        @auth
-        @if ($ad->owner == Auth::id()) <!-- Ja sludinājums pieder lietotājam -->
-        <div class="text-center m-3">
-                <a class="btn btn-lg btn-warning" href="/ads/{{ $id }}/edit">Rediģēt</a>
-                <a class="btn btn-lg btn-danger" href="/ads/{{ $id }}/delete">Dzēst</a>
+           
         </div>
-        @endif
-        @endauth
         <hr>
+
         <div class="row justify-content-center">
-            <div class="mapouter">
-                <div class="gmap_canvas"><iframe width="1000" height="500" id="gmap_canvas"
-                        src="https://maps.google.com/maps?q=R%C4%ABga&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                        frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><a
-                        href="https://123movies-to.org">widows 123movies</a></div>
-                <style>
-                    .mapouter {
-                        position: relative;
-                        text-align: right;
-                        height: 500px;
-                        width: 1000px;
-                    }
+            <div id="city-map">
 
-                    .gmap_canvas {
-                        overflow: hidden;
-                        background: none !important;
-                        height: 500px;
-                        width: 1000px;
-                    }
+            <script>
+                    // Leaflet JS map
+                    var lat = "{{ $geoLat }}";
+                    var lng = "{{ $getLng }}";
+                    var address = "{{ $ad->street }}";
+                    var adInfo = "{{ $ad->make }} {{ $ad->model }} - {{ $ad->year }}";
 
-                </style>
+                    var cityMap = L.map('city-map').setView([lat, lng], 15);
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+                    }).addTo(cityMap);
+
+                    var marker = L.marker([lat, lng]).addTo(cityMap);
+
+                    marker.bindPopup("<b>"+ adInfo + "</b>" + "<br>" + address).openPopup();
+            </script>
+
             </div>
         </div>
-    </div>
+</div>
+    <!-- baguetteBox.js image gallery -->
     <script>
         window.onload = function() {
             baguetteBox.run('.ads')
         }
     </script>
+
 @endsection

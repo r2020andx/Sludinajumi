@@ -23,39 +23,62 @@
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <!-- baguetteBox.js image gallery - https://www.cssscript.com/simple-gallery-lightbox-with-javascript-and-css3-baguettebox-js/ -->
     <link rel="stylesheet" href="/css/baguetteBox.css">
-
+    <!-- Leaflet JS maps - https://leafletjs.com  -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
 </head>
 
 <body>
     <div class="container">
-        <nav class="navbar d-flex my-3">
-
             @guest
                 @php
-                    $authBtnsClass = "btn btn-outline-primary";
-                    $logoutBtnClass = "btn invisible";
+                    $authBtnsClass = "nav-link";
+                    $logoutBtnClass = "nav-link d-none";
                 @endphp
             @endguest
             @auth
                 @php
-                    $authBtnsClass = "btn invisible";
-                    $logoutBtnClass = "btn btn-outline-danger";
+                    $authBtnsClass = "nav-link d-none";
+                    $logoutBtnClass = "nav-link";
                 @endphp
             @endauth
 
-            <a class="btn btn-outline-primary" href="/">Sākums</a>
-            <a class="btn btn-outline-primary" href="/ads/my">Mani sludinājumi</a>
-            <a class="btn btn-outline-success" href="/ads/create">Pievienot sludinājumu</a>
-            <a class="{{ $authBtnsClass }}" href="/register">Reģistrēties</a>
-            <a class="{{ $authBtnsClass }}" href="/login">Pierakstīties</a>
-            <a class="{{ $logoutBtnClass }}" href="{{ route('logout') }}" onclick="event.preventDefault();
-                document.getElementById('logout-form').submit();">
-                Izrakstīties
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                @csrf
-            </form>
-        </nav>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Sākums</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/ads/my">Mani sludinājumi</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/ads/create">Pievienot</a>
+                        </li>
+                        <li class="nav-item">
+                         <a class="{{ $authBtnsClass }}" href="/register">Reģistrēties</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="{{ $authBtnsClass }}" href="/login">Pierakstīties</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">     
+                        <li class="nav-item">
+                            <a class="{{ $logoutBtnClass }}" href="{{ route('logout') }}" onclick="event.preventDefault();
+                                    document.getElementById('logout-form').submit();">Izrakstīties</a>
+                        </li>
+                    </ul>
+                   
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
+                </div>
+                
+            </div>
+            </nav>
         <main>
             @php
                 $message = session('message');
