@@ -34,9 +34,18 @@
                 </table>
                     @auth
                     @if ($ad->owner == Auth::id()) <!-- Ja sludinājums pieder lietotājam -->
-                    <div class="text-center m-3">
+                    <div class="text-center m-5">
                             <a class="btn btn btn-warning" href="/ads/{{ $id }}/edit">Rediģēt</a>
                             <a class="btn btn btn-danger" href="/ads/{{ $id }}/delete">Dzēst</a>
+                    </div>
+                    @else
+                    <div class="text-center m-5">
+                        <a class="p-3 text-decoration-none" href="#">
+                            <img src="/img/icons/hand-thumbs-up-fill.svg" width="32" height="32">
+                        </a>
+                        <a class="p-3 text-decoration-none" href="#">
+                          <img src="/img/icons/hand-thumbs-down.svg" width="32" height="32">
+                        </a> 
                     </div>
                     @endif
                     @endauth
@@ -46,12 +55,12 @@
                         <div class="row">    
                             @foreach ($photos as $photo)
                             @php
-                            $photoPathFullSize = "/$photosLocation/$photo";
+                            $photoPath = "/$photosLocation/_resized/$photo";
                             $photoPathPreview = "/$photosLocation/_preview/$photo";
                             @endphp
                             <div class="col-md-6 my-2">
                                 <div class="preview-container">
-                                  <a href="{{ $photoPathFullSize }}" data-caption="{{$ad->make}} {{$ad->model}}">
+                                  <a href="{{ $photoPath }}" data-caption="{{$ad->make}} {{$ad->model}}">
                                     <img class="preview" src="{{ $photoPathPreview }}">
                                   </a>
                                 </div>
@@ -62,8 +71,9 @@
             </div>
            
         </div>
-        <hr>
 
+        @if ($addressIsValid)
+        <hr>
         <div class="row justify-content-center">
             <div id="city-map">
 
@@ -88,6 +98,7 @@
 
             </div>
         </div>
+        @endif
 </div>
     <!-- baguetteBox.js image gallery -->
     <script>

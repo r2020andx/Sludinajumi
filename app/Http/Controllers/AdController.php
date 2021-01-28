@@ -37,11 +37,23 @@ class AdController extends Controller
         $geoCodeQuery = "$geoCodeApiURI?q=$geoCodeAddress&pretty=1&key=$geoCodeApiKey";
         $json = file_get_contents($geoCodeQuery);
         $geoCodeData = json_decode($json);
-        $geoCodeDataLat = $geoCodeData->results[0]->geometry->lat;
-        $geoCodeDataLng = $geoCodeData->results[0]->geometry->lng;
-        // End geocoding
+        
+        if($geoCodeData->total_results == 0 || $geoCodeData->status->code != 200) {
+            $addressIsValid = FALSE;
+            $geoCodeDataLat = NULL;
+            $geoCodeDataLng = NULL;
+        } else {
+            $addressIsValid = TRUE;
+            $geoCodeDataLat = $geoCodeData->results[0]->geometry->lat;
+            $geoCodeDataLng = $geoCodeData->results[0]->geometry->lng;
+        }
+
+        
         $photosLocation = $ad->photosFolder;
-        $photos = array_diff(scandir('./'.$photosLocation), array('..', '.', '_preview')); // Noņem Linux tipa punktus folderiem
+        $photos = array_diff(scandir('./'.$photosLocation), array('..', '.', '_preview', '_resized')); // Noņem Linux tipa punktus un darba folderus - lai būtu redzams tikai root saturs
+        
+        ++$ad->views; // Pieskaita vienu skatījumu
+        $ad->save();
 
         return view('show', 
             [
@@ -50,7 +62,8 @@ class AdController extends Controller
                 'geoLat' => $geoCodeDataLat,
                 'getLng' => $geoCodeDataLng,
                 'photosLocation' => $photosLocation,
-                'photos' => $photos
+                'photos' => $photos,
+                'addressIsValid' => $addressIsValid
             ]);
     }
 
@@ -72,14 +85,19 @@ class AdController extends Controller
         $ad->views = 0;
         $ad->rating = 0;
         
-        mkdir($ad->photosFolder);               // Attēlu folderis
+        mkdir($ad->photosFolder);               // Oriģinālo attēlu folderis
         mkdir($ad->photosFolder.'/_preview');   // Mazo attēlu folderis
+        mkdir($ad->photosFolder.'/_resized');// Optimizētu attēlu folderis
         $photos = $_FILES['photos']['tmp_name'];
         foreach ($photos as $photo) {
                 
                 // Upload fullsize image
                 move_uploaded_file($photo, realpath($ad->photosFolder).'\\'.basename($photo).'.jpg');
-                // Upload preview image
+                // Resize and upload optimized image
+                $resizedPhoto = new ImageResize(realpath($ad->photosFolder).'\\'.basename($photo).'.jpg');
+                $resizedPhoto->resizeToWidth(1200);
+                $resizedPhoto->save(realpath($ad->photosFolder).'\\_resized\\'.basename($photo).'.jpg');
+                // Resize and upload preview image
                 $smallPhoto = new ImageResize(realpath($ad->photosFolder).'\\'.basename($photo).'.jpg');
                 $smallPhoto->resizeToHeight(200);
                 $smallPhoto->save(realpath($ad->photosFolder).'\\_preview\\'.basename($photo).'.jpg');

@@ -42,7 +42,11 @@
                     <div class="row">
                     <div class="col-12">
                         @php
-                         $firstPhotoFile = "/" . $ad->photosFolder . "/" . scandir($ad->photosFolder)[3];
+                        /* 
+                        Pirmais attēls root folderī ir 4.
+                        0 = ".", 1 = "..", 2 = "_preview", 3 = "_resized"
+                        */
+                         $firstPhotoFile = "/" . $ad->photosFolder . "/" . scandir($ad->photosFolder)[4];
                         @endphp
                         <div class="preview-container">
                             <a href="/ads/{{ $ad->id }}">
@@ -54,11 +58,11 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                       <div class="text-muted">Reitings: {{ $ad->rating }}</div>
+                       <div class="text-center text-muted m-2">Skatījumi: {{ $ad->views }}</div>
                     </div>
                 </div>
                 <div class="row justify-content-center">
-                    <a class="btn btn-secondary m-3" href="/ads/{{ $ad->id }}">Apskatīt</a>
+                    <a class="btn w-50 btn-secondary m-1" href="/ads/{{ $ad->id }}">Apskatīt</a>
                 </div>
             </div>
         </div>
