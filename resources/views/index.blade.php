@@ -41,11 +41,11 @@
                     </div>
                     <div class="row">
                     <div class="col-12">
+                        <!--
+                                Pirmais attēls root folderī ir ar indeksu 4.
+                                0 = ".", 1 = "..", 2 = "_preview", 3 = "_resized"
+                        -->
                         @php
-                        /* 
-                        Pirmais attēls root folderī ir 4.
-                        0 = ".", 1 = "..", 2 = "_preview", 3 = "_resized"
-                        */
                          $firstPhotoFile = "/" . $ad->photosFolder . "/" . scandir($ad->photosFolder)[4];
                         @endphp
                         <div class="preview-container">

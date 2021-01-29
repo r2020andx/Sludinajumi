@@ -53,15 +53,13 @@
             <div class="col-lg">
                     <div class="ads gallery">
                         <div class="row">    
-                            @foreach ($photos as $photo)
+                            @foreach ($photosArray as $photo)
                             @php
-                            $photoPath = "/$photosLocation/_resized/$photo";
-                            $photoPathPreview = "/$photosLocation/_preview/$photo";
                             @endphp
                             <div class="col-md-6 my-2">
                                 <div class="preview-container">
-                                  <a href="{{ $photoPath }}" data-caption="{{$ad->make}} {{$ad->model}}">
-                                    <img class="preview" src="{{ $photoPathPreview }}">
+                                  <a href="{{ $photosResizedPath . '/' . basename($photo) }}" data-caption="{{$ad->make}} {{$ad->model}}">
+                                    <img class="preview" src="{{ $photosPreviewPath . '/' . basename($photo) }}">
                                   </a>
                                 </div>
                             </div>
