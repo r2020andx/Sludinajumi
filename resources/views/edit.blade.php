@@ -28,6 +28,15 @@
                 <div class="m-2 text-center">
                     <button class="btn btn-success" type="submit">Saglabāt</button>
                 </div>
+                <div class="m-2">
+                    <div class="row">
+                        @foreach ($photos as $photo)
+                            <div class="col-3">
+                                <img class="" src="{{ $photosPathPreview $photosFileName }}">            
+                            </div>
+                        @endforeach
+                        </div>
+                </div>
         </form>
     </div>
 </div>

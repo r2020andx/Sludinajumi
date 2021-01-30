@@ -41,16 +41,13 @@
                     </div>
                     <div class="row">
                     <div class="col-12">
-                        <!--
-                                Pirmais attēls root folderī ir ar indeksu 4.
-                                0 = ".", 1 = "..", 2 = "_preview", 3 = "_resized"
-                        -->
                         @php
-                         $firstPhotoFile = "/" . $ad->photosFolder . "/" . scandir($ad->photosFolder)[4];
+                        $photosArray = Storage::files("/public/img/ads/" . $ad->photosFolder);
+                        $firstPhotoPathFile = "/storage/img/ads/" . $ad->photosFolder . "/_preview/" . basename($photosArray[0]);
                         @endphp
                         <div class="preview-container">
                             <a href="/ads/{{ $ad->id }}">
-                                <img class="preview" src=" {{ $firstPhotoFile }} ">
+                                <img class="preview" src="{{ $firstPhotoPathFile }}">
                             </a>
                         </div>
                     </div>

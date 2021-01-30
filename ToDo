@@ -1,10 +1,11 @@
 # Globāli
 - Sludinājumu rediģēšanā (edit()) ietvert arī bildes
+- Sakārtot mainīgos, kas atkārtojas
 
 # Bildes
-- Ar sludinājumu dzēst arī foto
++ Ar sludinājumu dzēst arī foto
 + Samazināt galerijas bildes
-- Optimizēt faila nosaukumus bildēm
++ Optimizēt faila nosaukumus bildēm
 - Pieņemt tikai JPG, PNG formātus un saglabāt ar attiecīgo ext
 
 # Reitings
@@ -15,5 +16,3 @@
 
 # Karte
 + Nerādīt karti, ja adrese nav atrasta API
-
-

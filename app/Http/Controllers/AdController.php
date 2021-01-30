@@ -8,18 +8,20 @@ use Gumlet\ImageResize;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-use function PHPSTORM_META\type;
-use function PHPUnit\Framework\isEmpty;
 
 class AdController extends Controller
-{
+{   
+    protected static $photosBasePathRoot = "public/img/ads/";
+    protected static $photosBasePathPublic = "storage/img/ads/";
+    protected static $photosPreviewPath = "/_preview/";
+    protected static $photosResizedPath = "/_resized/";
+
     public function index() {
             $ads = Ad::all();
             $noAdsMessage = "";
             if ($ads->isEmpty()) {
                 $noAdsMessage = "Nav neviena sludinājuma";
             }
-            
             return view('index', ['ads' => $ads, 'noAdsMessage' => $noAdsMessage]);
     }
     public function indexMyAds() {
@@ -33,7 +35,7 @@ class AdController extends Controller
 
     public function show($id) {
         $ad = Ad::where('id', $id)->first();
-        // Geocoding - convert address to lat. & lang.
+        // Geocoding - konvertē ielas adresi uz lat. & lang.
         $geoCodeApiKey = "05537e2574534d6a9b1e66be98b638cc"; // OpenCage Geocoding API key
         $geoCodeApiURI = "https://api.opencagedata.com/geocode/v1/json";
         $geoCodeStreet = $ad->street;
@@ -52,11 +54,6 @@ class AdController extends Controller
             $geoCodeDataLat = $geoCodeData->results[0]->geometry->lat;
             $geoCodeDataLng = $geoCodeData->results[0]->geometry->lng;
         }
-
-        $photosFullPath = "/public/img/ads/" . $ad->photosFolder;
-        $photosPreviewPath = "/storage/img/ads/" . $ad->photosFolder . "/_preview";
-        $photosResizedPath = "/storage/img/ads/" . $ad->photosFolder . "/_resized";
-        $photosArray = Storage::files($photosFullPath);
 
         $clientIp = $_SERVER['REMOTE_ADDR'];
         $isVisited = Visits::where('ip_address', $clientIp)->where('ad_id', $ad->id)->first();   // Pirmais ieraksts DB, kur klienta IP ir apmeklējusi sludinājuma ID
@@ -78,10 +75,10 @@ class AdController extends Controller
                 'ad' => $ad,
                 'geoLat' => $geoCodeDataLat,
                 'getLng' => $geoCodeDataLng,
-                'photosFullPath' => $photosFullPath,
-                'photosArray' => $photosArray,
-                'photosPreviewPath' => $photosPreviewPath,
-                'photosResizedPath' => $photosResizedPath,
+                'photosBasePath' => self::$photosBasePathPublic,
+                //'photosArray' => $this->photosArray,
+                'photosPreviewPath' => self::$photosBasePathPublic . $ad->photosFolder . self::$photosPreviewPath,
+                'photosResizedPath' => self::$photosBasePathPublic . $ad->photosFolder . self::$photosResizedPath, 
                 'addressIsValid' => $addressIsValid
             ]);
     }
@@ -91,6 +88,9 @@ class AdController extends Controller
     }
 
     public function store(Request $request) {
+
+        $request->validate(['photos.*' => 'mimes:jpg,png']); // Vai ienākošie faili ir attēla formātā
+
         $ad = new Ad();
         $ad->make = $request->make;
         $ad->model = $request->model;
@@ -103,33 +103,28 @@ class AdController extends Controller
         $ad->photosFolder = uniqid();
         $ad->views = 0;
         $ad->rating = 0;
-        $photosPath = "public/img/ads/";
-        $photosPathPub = "storage/img/ads/";
-        $photosFullSizePath =    $photosPath . $ad->photosFolder;
-        $photosPreviewPath = $photosPath . $ad->photosFolder . "/_preview/";
-        $photosResizedPath = $photosPath . $ad->photosFolder . "/_resized/";
-        $photosPreviewPathPub = $photosPathPub . $ad->photosFolder . "/_preview/";
-        $photosResizedPathPub = $photosPathPub . $ad->photosFolder . "/_resized/";
 
-        Storage::makeDirectory($photosFullSizePath);    // Oriģinālo attēlu folderis
-        Storage::makeDirectory($photosPreviewPath); // Mazo attēlu folderis
-        Storage::makeDirectory($photosResizedPath); // Optimizētu attēlu folderis
+        // Oriģinālo attēlu folderis
+        Storage::makeDirectory(self::$photosBasePathRoot . $ad->photosFolder);
+        // Mazo attēlu folderis
+        Storage::makeDirectory(self::$photosBasePathRoot . $ad->photosFolder . self::$photosPreviewPath);
+        // Optimizētu attēlu folderis 
+        Storage::makeDirectory(self::$photosBasePathRoot . $ad->photosFolder . self::$photosResizedPath); 
 
-        foreach ($request->file('photos') as $photo) {
-                
+           foreach ($request->photos as $photo) {     
                 // Upload fullsize image
-                $photoFilePath = Storage::putFile($photosFullSizePath, $photo->getRealPath());
+                $photoFilePath = Storage::putFile(self::$photosBasePathRoot . $ad->photosFolder, $photo->getRealPath());
                 $photoFileName = basename($photoFilePath);
 
                 // Resize and upload
                 $resizedPhoto = new ImageResize($photo->getRealPath());
                 // Optimized photo
-                $resizedPhoto->resizeToWidth(1200);
-                $resizedPhoto->save($photosResizedPathPub . $photoFileName);
-
+                $resizedPhoto->resizeToWidth(1200, true);   // allow_enlarge = true
+                //$resizedPhoto->save(self::$photosBasePathPublic . $ad->photosFolder . self::$photosResizedPath . $photoFileName);
+                $resizedPhoto->save(self::$photosBasePathPublic . $ad->photosFolder . self::$photosResizedPath . $photoFileName);
                 // Small preview photo
-                $resizedPhoto->resizeToWidth(200);
-                $resizedPhoto->save($photosPreviewPathPub . $photoFileName);
+                $resizedPhoto->resizeToWidth(400);
+                $resizedPhoto->save(self::$photosBasePathPublic . $ad->photosFolder . self::$photosPreviewPath . $photoFileName);
             }
          
         $ad->save();
@@ -139,7 +134,9 @@ class AdController extends Controller
 
     public function edit($id) {
         $ad = Ad::where('id', $id)->first();
-        return view('edit', ['id' => $id, 'ad' => $ad]);
+        return view('edit', ['id' => $id,
+                             'ad' => $ad
+                            ]);
     }
 
     public function update($id, Request $request) {
@@ -158,24 +155,22 @@ class AdController extends Controller
 
     public function delete($id) {
         $ad = Ad::where('id', $id)->first();    
-        if ($ad->owner == Auth::id()) {             // Ja pieder sludinājums
+        if ($ad->owner == Auth::id()) {               // Ja pieder sludinājums
             return view('delete', [ 'id' => $id,
                                     'ad' => $ad ]);   // Parādīt dzēšanas dialogu
         } else {
             $message = "Nav pieejas";
-            return redirect('/ads/'.$id)->with(['id' => $id, 'ad' => $ad, 'message' => $message]);           // Citādi atgriezties
+            return redirect('/ads/'.$id)->with(['id' => $id, 'ad' => $ad, 'message' => $message]);
         }
     }
 
     public function destroy($id) {
         $ad = Ad::where('id', $id)->first();
-        //Ad::destroy($id);
-        //$result = Storage::deleteDirectory("img/ads/" . $ad->photosFolder);
-        //dd($result);
+        Ad::destroy($id);
+        Storage::deleteDirectory(self::$photosBasePathRoot . $ad->photosFolder); // Dzēst attēlu folderi
         $message = "Sludinājums ir dzēsts";
         return redirect('/ads')->with(['message' => $message]);
     }
-
-    
+   
    
 }
