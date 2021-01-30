@@ -11,10 +11,21 @@ use Illuminate\Support\Facades\Storage;
 
 class AdController extends Controller
 {   
-    protected static $photosBasePathRoot = "public/img/ads/";
-    protected static $photosBasePathPublic = "storage/img/ads/";
+    protected static $photosBasePathRoot = "./public/img/ads/";
+    protected static $photosBasePathPublic = "./storage/img/ads/";
     protected static $photosPreviewPath = "/_preview/";
     protected static $photosResizedPath = "/_resized/";
+
+    public static function getPhotosFileNames($id, $firstOneOnly = FALSE) {
+        $ad = Ad::where('id', $id)->first();
+        $photosFullPaths = Storage::files(self::$photosBasePathRoot . $ad->photosFolder);
+        $photosFileNames = array_map('basename', $photosFullPaths);
+        if ($firstOneOnly) {
+            return $photosFileNames[0];
+        } else {
+            return $photosFileNames;
+        }
+    }
 
     public function index() {
             $ads = Ad::all();
@@ -22,7 +33,11 @@ class AdController extends Controller
             if ($ads->isEmpty()) {
                 $noAdsMessage = "Nav neviena sludinājuma";
             }
-            return view('index', ['ads' => $ads, 'noAdsMessage' => $noAdsMessage]);
+            return view('index', ['ads' => $ads,
+                                  'noAdsMessage' => $noAdsMessage,
+                                  'photosBasePathPublic' => self::$photosBasePathPublic,
+                                  'photosPreviewPath' => self::$photosPreviewPath
+                                 ]);
     }
     public function indexMyAds() {
             $ads = Ad::where('owner', Auth::id())->get();
@@ -30,7 +45,11 @@ class AdController extends Controller
             if ($ads->isEmpty()) {
                 $noAdsMessage = "Nav neviena sludinājuma";
             }
-        return view('index', ['ads' => $ads, 'noAdsMessage' => $noAdsMessage]);
+        return view('index', ['ads' => $ads,
+                              'noAdsMessage' => $noAdsMessage,
+                              'photosBasePathPublic' => self::$photosBasePathPublic,
+                              'photosPreviewPath' => self::$photosPreviewPath
+                             ]);
     }
 
     public function show($id) {
@@ -57,12 +76,10 @@ class AdController extends Controller
 
         $clientIp = $_SERVER['REMOTE_ADDR'];
         $isVisited = Visits::where('ip_address', $clientIp)->where('ad_id', $ad->id)->first();   // Pirmais ieraksts DB, kur klienta IP ir apmeklējusi sludinājuma ID
-
         if ( !isset($isVisited) ) { // Ja nepastāv ieraksts, kur klienta IP ir apmeklējusi sludinājuma ID
                 ++$ad->views;       // Pieskaita vienu skatījumu
                 $ad->save();
         }
-
         // Saglabā datubāzē apmeklējuma IP un sludinājuma ID
         $visitEntry = new Visits();
         $visitEntry->ip_address = $clientIp;
@@ -75,10 +92,9 @@ class AdController extends Controller
                 'ad' => $ad,
                 'geoLat' => $geoCodeDataLat,
                 'getLng' => $geoCodeDataLng,
-                'photosBasePath' => self::$photosBasePathPublic,
-                //'photosArray' => $this->photosArray,
                 'photosPreviewPath' => self::$photosBasePathPublic . $ad->photosFolder . self::$photosPreviewPath,
-                'photosResizedPath' => self::$photosBasePathPublic . $ad->photosFolder . self::$photosResizedPath, 
+                'photosResizedPath' => self::$photosBasePathPublic . $ad->photosFolder . self::$photosResizedPath,
+                'photosFileNames' => $this->getPhotosFileNames($ad->id), 
                 'addressIsValid' => $addressIsValid
             ]);
     }
@@ -129,13 +145,16 @@ class AdController extends Controller
          
         $ad->save();
         $message = "Pievienots";
-        return redirect('/ads/'.$ad->id)->with(['message' => $message]);
+        return redirect('/'.$ad->id)->with(['message' => $message]);
     }
 
     public function edit($id) {
         $ad = Ad::where('id', $id)->first();
         return view('edit', ['id' => $id,
-                             'ad' => $ad
+                             'ad' => $ad,
+                             'photosPreviewPath' => self::$photosBasePathPublic . $ad->photosFolder . self::$photosPreviewPath,
+                             'photosResizedPath' => self::$photosBasePathPublic . $ad->photosFolder . self::$photosResizedPath,
+                             'photosFileNames' => $this->getPhotosFileNames($ad->id), 
                             ]);
     }
 
@@ -150,7 +169,7 @@ class AdController extends Controller
         $ad->city = $request->city;
         $ad->save();
         $message = "Saglabāts";
-        return redirect('/ads/'.$id)->with(['message' => $message]);
+        return redirect('/'.$id)->with(['message' => $message]);
     }
 
     public function delete($id) {
@@ -160,7 +179,7 @@ class AdController extends Controller
                                     'ad' => $ad ]);   // Parādīt dzēšanas dialogu
         } else {
             $message = "Nav pieejas";
-            return redirect('/ads/'.$id)->with(['id' => $id, 'ad' => $ad, 'message' => $message]);
+            return redirect('/'.$id)->with(['id' => $id, 'ad' => $ad, 'message' => $message]);
         }
     }
 
@@ -169,7 +188,7 @@ class AdController extends Controller
         Ad::destroy($id);
         Storage::deleteDirectory(self::$photosBasePathRoot . $ad->photosFolder); // Dzēst attēlu folderi
         $message = "Sludinājums ir dzēsts";
-        return redirect('/ads')->with(['message' => $message]);
+        return redirect('/')->with(['message' => $message]);
     }
    
    

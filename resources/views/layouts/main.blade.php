@@ -53,10 +53,10 @@
                             <a class="nav-link" href="/">Sākums</a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="/ads/my">Mani sludinājumi</a>
+                          <a class="nav-link" href="/my">Mani sludinājumi</a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="/ads/create">Pievienot</a>
+                          <a class="nav-link" href="/create">Pievienot</a>
                         </li>
                         <li class="nav-item">
                          <a class="{{ $authBtnsClass }}" href="/register">Reģistrēties</a>

@@ -2,7 +2,7 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-sm-10 col-md-6 col-lg-4 border">
-        <form action="/ads/{{ $id }}" method="POST">
+        <form action="/{{ $id }}" method="POST">
             @method('PUT')
             @csrf
                 <div class="m-2">
@@ -30,9 +30,9 @@
                 </div>
                 <div class="m-2">
                     <div class="row">
-                        @foreach ($photos as $photo)
+                        @foreach ($photosFileNames as $photo)
                             <div class="col-3">
-                                <img class="" src="{{ $photosPathPreview $photosFileName }}">            
+                                <img class="" src="{{ $photosPreviewPath }}{{ $photo }}">            
                             </div>
                         @endforeach
                         </div>

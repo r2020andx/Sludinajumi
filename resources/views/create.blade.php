@@ -3,7 +3,7 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-sm-10 col-md-6 col-lg-4 border">
-        <form action="/ads" method="post" enctype="multipart/form-data">
+        <form action="/" method="post" enctype="multipart/form-data">
             @csrf
             <div class="m-2">
                 <input class="form-control" type="text" name="make" placeholder="Marka">

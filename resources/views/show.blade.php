@@ -35,8 +35,8 @@
                     @auth
                     @if ($ad->owner == Auth::id()) <!-- Ja sludinājums pieder lietotājam -->
                     <div class="text-center m-5">
-                            <a class="btn btn btn-warning" href="/ads/{{ $id }}/edit">Rediģēt</a>
-                            <a class="btn btn btn-danger" href="/ads/{{ $id }}/delete">Dzēst</a>
+                            <a class="btn btn btn-warning" href="/{{ $id }}/edit">Rediģēt</a>
+                            <a class="btn btn btn-danger" href="/{{ $id }}/delete">Dzēst</a>
                     </div>
                     @else
                     <div class="text-center m-5">
@@ -53,15 +53,15 @@
             <div class="col-lg">
                     <div class="ads gallery">
                         <div class="row">    
-                            
+                        @foreach ($photosFileNames as $photo)
                             <div class="col-md-6 my-2">
                                 <div class="preview-container">
-                                  <a href="#" data-caption="{{$ad->make}} {{$ad->model}}">
-                                    <img class="preview" src="">
+                                  <a href="{{$photosResizedPath}}{{$photo}}" data-caption="{{$ad->make}} {{$ad->model}}">
+                                    <img class="preview" src="{{$photosPreviewPath}}{{$photo}}">
                                   </a>
                                 </div>
                             </div>
-                            
+                        @endforeach    
                         </div>
                     </div>
             </div>

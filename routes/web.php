@@ -16,19 +16,15 @@ use Illuminate\Support\Facades\Route;
 */
 Auth::routes();
 
-Route::get('/', function() {
-    return redirect('/ads');
-});
-
-Route::get('/ads', [AdController::class, 'index']);
-Route::get('/ads/my', [AdController::class, 'indexMyAds'])->middleware('auth');
-Route::post('/ads', [AdController::class, 'store'])->middleware('auth');
-Route::get('/ads/create', [AdController::class, 'create'])->middleware('auth');
-Route::get('/ads/{id}', [AdController::class , 'show']);
-Route::get('/ads/{id}/edit', [AdController::class, 'edit'])->middleware('auth');
-Route::get('/ads/{id}/delete', [AdController::class, 'delete'])->middleware('auth');
-Route::put('/ads/{id}', [AdController::class, 'update'])->middleware('auth');
-Route::delete('/ads/{id}', [AdController::class, 'destroy'])->middleware('auth');
+Route::get('/', [AdController::class, 'index']);
+Route::get('/my', [AdController::class, 'indexMyAds'])->middleware('auth');
+Route::post('/', [AdController::class, 'store'])->middleware('auth');
+Route::get('/create', [AdController::class, 'create'])->middleware('auth');
+Route::get('/{id}', [AdController::class , 'show']);
+Route::get('/{id}/edit', [AdController::class, 'edit'])->middleware('auth');
+Route::get('/{id}/delete', [AdController::class, 'delete'])->middleware('auth');
+Route::put('/{id}', [AdController::class, 'update'])->middleware('auth');
+Route::delete('/{id}', [AdController::class, 'destroy'])->middleware('auth');
 
 
 

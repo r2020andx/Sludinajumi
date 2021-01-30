@@ -1,3 +1,6 @@
+@php
+use \app\Http\Controllers\AdController;
+@endphp
 @extends('layouts.main')
 
 @section('content')
@@ -41,13 +44,12 @@
                     </div>
                     <div class="row">
                     <div class="col-12">
-                        @php
-                        $photosArray = Storage::files("/public/img/ads/" . $ad->photosFolder);
-                        $firstPhotoPathFile = "/storage/img/ads/" . $ad->photosFolder . "/_preview/" . basename($photosArray[0]);
-                        @endphp
+                    @php
+                        $firstPhoto = AdController::getPhotosFileNames($ad->id, TRUE);
+                    @endphp
                         <div class="preview-container">
-                            <a href="/ads/{{ $ad->id }}">
-                                <img class="preview" src="{{ $firstPhotoPathFile }}">
+                            <a href="/{{ $ad->id }}">
+                                <img class="preview" src="{{ $photosBasePathPublic }}{{ $ad->photosFolder }}{{ $photosPreviewPath }}{{ $firstPhoto }}">
                             </a>
                         </div>
                     </div>
@@ -59,7 +61,7 @@
                     </div>
                 </div>
                 <div class="row justify-content-center">
-                    <a class="btn w-50 btn-secondary m-1" href="/ads/{{ $ad->id }}">Apskatīt</a>
+                    <a class="btn w-50 btn-secondary m-1" href="/{{ $ad->id }}">Apskatīt</a>
                 </div>
             </div>
         </div>
