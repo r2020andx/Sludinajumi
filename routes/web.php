@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AdController;
-use App\Models\Visits;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Auth::routes();
+
 
 Route::get('/', [AdController::class, 'index']);
 Route::get('/my', [AdController::class, 'indexMyAds'])->middleware('auth');

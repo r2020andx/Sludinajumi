@@ -31,11 +31,11 @@
                 <div class="m-2">
                     <div class="row">
                         @foreach ($photosFileNames as $photo)
-                            <div class="col-3">
-                                <img class="" src="{{ $photosPreviewPath }}{{ $photo }}">            
+                            <div class="col-6">
+                                <img class="m-1" width="200px" src="/{{ $photosPreviewPath }}{{ $photo }}">            
                             </div>
                         @endforeach
-                        </div>
+                    </div>
                 </div>
         </form>
     </div>

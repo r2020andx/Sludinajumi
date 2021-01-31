@@ -36,7 +36,9 @@
                     @if ($ad->owner == Auth::id()) <!-- Ja sludinājums pieder lietotājam -->
                     <div class="text-center m-5">
                             <a class="btn btn btn-warning" href="/{{ $id }}/edit">Rediģēt</a>
-                            <a class="btn btn btn-danger" href="/{{ $id }}/delete">Dzēst</a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAdDialog">
+                                Dzēst
+                            </button>
                     </div>
                     @else
                     <div class="text-center m-5">
@@ -96,11 +98,34 @@
         </div>
         @endif
 </div>
-    <!-- baguetteBox.js image gallery -->
-    <script>
-        window.onload = function() {
-            baguetteBox.run('.ads')
-        }
-    </script>
+<!-- baguetteBox.js image gallery -->
+<script>
+    window.onload = function() {
+                        baguetteBox.run('.ads')
+                    }
+</script>
+
+<!-- Dzēšanas apstriprinājuma logs -->
+<div class="modal fade" id="deleteAdDialog" tabindex="-1" aria-labelledby="deleteAdDialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteAdDialogTitle">Vai dzēst sludinājumu?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      {{ $ad->make }} {{ $ad->model }} {{ $ad->year }}
+      </div>
+      <div class="modal-footer">
+      <form action="/{{ $id }}" method="POST" class="d-flex justify-content-center">
+        @method('DELETE')
+        @csrf
+        <button type="button" class="btn m-2 btn-secondary" data-bs-dismiss="modal">Atcelt</button>
+        <button type="submit" class="btn m-2 btn-danger">Dzēst</button>
+      </form> 
+      </div>
+    </div>
+  </div>
+</div>
 
 @endsection

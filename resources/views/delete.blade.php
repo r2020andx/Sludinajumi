@@ -11,7 +11,5 @@
         <a class="btn btn-lg btn-warning m-2" href="/{{ $id }}">Atcelt</a>
         </p>
     </div>
-
-
 </form>
 @endsection
