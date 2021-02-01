@@ -159,6 +159,13 @@ class AdController extends Controller
     }
 
     public function update($id, Request $request) {
+        
+        if ( isset($request->newPhoto) ) {
+            dd($request->newPhoto);
+        } else {
+            dd("No new photos");
+        }
+
         $ad = Ad::where('id', $id)->first();
         $ad->make = $request->make;
         $ad->model = $request->model;
