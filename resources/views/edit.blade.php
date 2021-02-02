@@ -31,9 +31,9 @@
                 <div class="m-2">
                     <div class="row">
                         @foreach ($photosFileNames as $photo)
-                            <div class="col-6">
+                            <div class="col-md-12 col-lg-6">
                                 <a onclick='setCurrentPhoto("/{{ $photosResizedPath }}{{$photo}}")' data-bs-toggle="modal" href="#photoEditDialog">
-                                    <img class="m-1" width="200px" src="/{{ $photosPreviewPath }}{{ $photo }}">
+                                    <img class="img-fluid my-2" src="/{{ $photosPreviewPath }}{{ $photo }}">
                                 </a>           
                             </div>
                         @endforeach
@@ -61,7 +61,7 @@
     }
 </script>
 
-<div class="modal fade" id="photoEditDialog" tabindex="-1" aria-labelledby="photoEditDialog" aria-hidden="true">
+<div class="modal fade" id="photoEditDialog" tabindex="-1" aria-labelledby="photoEditDialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -73,7 +73,7 @@
       </div>
       <div class="modal-footer">
         <div class="row m-auto">
-            <div class="col-10">
+            <div class="col-md-12 col-lg-10 my-3">
                 <form class="d-flex" action="/{{ $id }}" method="POST" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
@@ -82,7 +82,7 @@
                     <button id="submitNewPhoto" type="submit" class="btn btn-warning mx-1" disabled>Mainīt</button>
                 </form>
             </div>
-            <div class="col-2">
+            <div class="col-md-12 col-lg-2 my-3 text-center">
                 <button class="btn btn-danger">Dzēst</button>
             </div>
         </div>
