@@ -45,21 +45,22 @@
 
 <!-- Attēlu rediģēšanas logs -->
 <script>
-    function setCurrentPhoto(photo) {  // Aizsūta uz logu (zemāk) info par tekošo attēla failu
-        currentPhoto = photo;
+    function setCurrentPhoto(photo) {  // Aizsūta uz dialoga logu (#photoEditDialog) info par tekošo attēla failu
         document.getElementById('modalPhoto').src = photo;
+        document.getElementById('currentPhoto').value = photo;
     }
-    function enableSubmitButton() {
+    function enableSubmitButton() {    // Ja faila pievienošanas formā ir ielikts fails
         if (document.getElementById('newPhotoSelctor') != '') {
             document.getElementById('submitNewPhoto').disabled = false;
         }
     }
-    function clearPhotoSelector() {
+    function clearPhotoSelector() {    // Ja dialogs tiek aizvērts, izņem failu no formas un padara pogu neaktīvu
             document.getElementById('newPhotoSelector').value = '';
+            document.getElementById('currentPhoto').value = null;
             document.getElementById('submitNewPhoto').disabled = true;
     }
-
 </script>
+
 <div class="modal fade" id="photoEditDialog" tabindex="-1" aria-labelledby="photoEditDialog" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -73,10 +74,11 @@
       <div class="modal-footer">
         <div class="row m-auto">
             <div class="col-10">
-                <form class="d-flex" action="/{{ $id }}" method="POST">
+                <form class="d-flex" action="/{{ $id }}" method="POST" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
-                    <input oninput='enableSubmitButton()' id="newPhotoSelector" class="form-control" type="file" name="newPhoto">
+                    <input id="currentPhoto" name="currentPhoto" type="hidden" value="">
+                    <input oninput='enableSubmitButton()' id="newPhotoSelector" name="newPhoto" class="form-control" type="file">
                     <button id="submitNewPhoto" type="submit" class="btn btn-warning mx-1" disabled>Mainīt</button>
                 </form>
             </div>

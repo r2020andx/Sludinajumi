@@ -26,6 +26,20 @@ class AdController extends Controller
             return $photosFileNames;
         }
     }
+    public static function resizeAndUploadPhotos($photosFolder, $photoFile) {
+         // Saglabā pilnā izmēra bildi
+         $photoFilePath = Storage::putFile(self::$photosBasePathRoot . $photosFolder, $photoFile->getRealPath());
+         $photoFileName = basename($photoFilePath);
+
+         // Maina izmēru un saglabā
+         $resizedPhoto = new ImageResize($photoFile->getRealPath());
+         // Optimāla izmēra bilde
+         $resizedPhoto->resizeToWidth(1200, true);   // allow_enlarge = true
+         $resizedPhoto->save(self::$photosBasePathPublic . $photosFolder . self::$photosResizedPath . $photoFileName);
+         // Samazināta izmēra bilde
+         $resizedPhoto->resizeToWidth(400);
+         $resizedPhoto->save(self::$photosBasePathPublic . $photosFolder . self::$photosPreviewPath . $photoFileName);
+    }
 
     public function index() {
             $ads = Ad::all();
@@ -120,28 +134,16 @@ class AdController extends Controller
         $ad->views = 0;
         $ad->rating = 0;
 
-        // Oriģinālo attēlu folderis
+        // Pilna izmēra attēlu folderis
         Storage::makeDirectory(self::$photosBasePathRoot . $ad->photosFolder);
         // Mazo attēlu folderis
         Storage::makeDirectory(self::$photosBasePathRoot . $ad->photosFolder . self::$photosPreviewPath);
         // Optimizētu attēlu folderis 
         Storage::makeDirectory(self::$photosBasePathRoot . $ad->photosFolder . self::$photosResizedPath); 
 
-           foreach ($request->photos as $photo) {     
-                // Upload fullsize image
-                $photoFilePath = Storage::putFile(self::$photosBasePathRoot . $ad->photosFolder, $photo->getRealPath());
-                $photoFileName = basename($photoFilePath);
-
-                // Resize and upload
-                $resizedPhoto = new ImageResize($photo->getRealPath());
-                // Optimized photo
-                $resizedPhoto->resizeToWidth(1200, true);   // allow_enlarge = true
-                //$resizedPhoto->save(self::$photosBasePathPublic . $ad->photosFolder . self::$photosResizedPath . $photoFileName);
-                $resizedPhoto->save(self::$photosBasePathPublic . $ad->photosFolder . self::$photosResizedPath . $photoFileName);
-                // Small preview photo
-                $resizedPhoto->resizeToWidth(400);
-                $resizedPhoto->save(self::$photosBasePathPublic . $ad->photosFolder . self::$photosPreviewPath . $photoFileName);
-            }
+        foreach ($request->photos as $photo) {     
+            self::resizeAndUploadPhotos($ad->photosFolder, $photo);           
+        }
          
         $ad->save();
         $message = "Pievienots";
@@ -159,24 +161,35 @@ class AdController extends Controller
     }
 
     public function update($id, Request $request) {
-        
-        if ( isset($request->newPhoto) ) {
-            dd($request->newPhoto);
-        } else {
-            dd("No new photos");
-        }
-
         $ad = Ad::where('id', $id)->first();
-        $ad->make = $request->make;
-        $ad->model = $request->model;
-        $ad->year = $request->year;
-        $ad->mileage = $request->mileage;
-        $ad->price = $request->price;
-        $ad->street = $request->street;
-        $ad->city = $request->city;
-        $ad->save();
-        $message = "Saglabāts";
-        return redirect('/'.$id)->with(['message' => $message]);
+
+        if ( isset($request->newPhoto) ) {  // Ja dati nāk no foto nomaiņas formas
+                // Izdzēš veco foto
+                $photoFileToDelete = basename($request->currentPhoto); // Atrod faila nosaukumu no iesūtītās formas
+                Storage::delete([
+                                self::$photosBasePathRoot . $ad->photosFolder . "/" . $photoFileToDelete,
+                                self::$photosBasePathRoot . $ad->photosFolder . self::$photosPreviewPath . $photoFileToDelete,
+                                self::$photosBasePathRoot . $ad->photosFolder . self::$photosResizedPath . $photoFileToDelete
+                                ]);
+
+                // Ielādē jauno foto
+                self::resizeAndUploadPhotos($ad->photosFolder, $request->newPhoto); 
+                $message = "Attēls saglabāts";
+
+                return redirect('/'.$id.'/edit')->with(['message' => $message]);
+        } else {                            
+                // Ja dati nāk no teksta formas
+                $ad->make = $request->make;
+                $ad->model = $request->model;
+                $ad->year = $request->year;
+                $ad->mileage = $request->mileage;
+                $ad->price = $request->price;
+                $ad->street = $request->street;
+                $ad->city = $request->city;
+                $ad->save();
+                $message = "Saglabāts";
+                return redirect('/'.$id)->with(['message' => $message]);
+        }
     }
 
     public function delete($id) {
