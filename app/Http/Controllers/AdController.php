@@ -33,12 +33,14 @@ class AdController extends Controller
 
          // Maina izmēru un saglabā
          $resizedPhoto = new ImageResize($photoFile->getRealPath());
-         // Optimāla izmēra bilde
-         $resizedPhoto->resizeToWidth(1200, true);   // allow_enlarge = true
-         $resizedPhoto->save(self::$photosBasePathPublic . $photosFolder . self::$photosResizedPath . $photoFileName);
-         // Samazināta izmēra bilde
-         $resizedPhoto->resizeToWidth(400);
-         $resizedPhoto->save(self::$photosBasePathPublic . $photosFolder . self::$photosPreviewPath . $photoFileName);
+         $resizedPhoto->gamma(false); // Neizmantot krāsu korekciju -> https://packagist.org/packages/gumlet/php-image-resize
+         
+        $resizedPhoto   // Optimāla izmēra bilde
+                        ->resizeToWidth(1200, true)   // allow_enlarge = true
+                        ->save(self::$photosBasePathPublic . $photosFolder . self::$photosResizedPath . $photoFileName)
+                        // Samazināta izmēra bilde
+                        ->resizeToWidth(400)
+                        ->save(self::$photosBasePathPublic . $photosFolder . self::$photosPreviewPath . $photoFileName);
     }
 
     public function index() {

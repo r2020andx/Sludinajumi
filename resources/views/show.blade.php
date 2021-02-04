@@ -41,14 +41,16 @@
                             </button>
                     </div>
                     @else
+                    <!--
                     <div class="text-center m-5">
                         <a class="p-3 text-decoration-none" href="#">
-                            <img src="/img/icons/hand-thumbs-up-fill.svg" width="32" height="32">
+                            <img src="/img/icons/hand-thumbs-up.svg" width="32" height="32">
                         </a>
                         <a class="p-3 text-decoration-none" href="#">
                           <img src="/img/icons/hand-thumbs-down.svg" width="32" height="32">
                         </a> 
                     </div>
+                    -->
                     @endif
                     @endauth
             </div>

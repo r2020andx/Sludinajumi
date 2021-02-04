@@ -7,6 +7,14 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Sludinājumi</title>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QXJ9Y8PESV"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-QXJ9Y8PESV');
+    </script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/display.css">
     <!-- Scripts -->
@@ -84,7 +92,7 @@
                 $message = session('message');
             @endphp
             @if(isset($message))
-                <div class="text-center alert alert-warning alert-dismissible fade show" role="alert">
+                <div class="alert alert-warning alert-dismissible fade show text-center w-25 mb-3 mx-auto" role="alert">
                     <strong>{{ $message }}</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -93,8 +101,8 @@
         </main>
         <footer>
             <hr>
-            <a href="https://github.com/ray2020andx/sludinajumi" target="_blank">
-            github.com/ray2020andx/Sludinajumi
+            <a href="https://github.com/r2020andx/sludinajumi" target="_blank">
+            github.com/r2020andx/Sludinajumi
             </a></p>
         </footer>
     </div>
