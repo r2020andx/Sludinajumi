@@ -27,13 +27,13 @@ class AdController extends Controller
         }
     }
     public static function resizeAndUploadPhotos($photosFolder, $photoFile) {
-         // Saglabā pilnā izmēra bildi
-         $photoFilePath = Storage::putFile(self::$photosBasePathRoot . $photosFolder, $photoFile->getRealPath());
-         $photoFileName = basename($photoFilePath);
+        // Saglabā pilnā izmēra bildi
+        $photoFilePath = Storage::putFile(self::$photosBasePathRoot . $photosFolder, $photoFile->getRealPath());
+        $photoFileName = basename($photoFilePath);
 
-         // Maina izmēru un saglabā
-         $resizedPhoto = new ImageResize($photoFile->getRealPath());
-         $resizedPhoto->gamma(false); // Neizmantot krāsu korekciju -> https://packagist.org/packages/gumlet/php-image-resize
+        // Maina izmēru un saglabā
+        $resizedPhoto = new ImageResize($photoFile->getRealPath());
+        $resizedPhoto->gamma(false); // Neizmantot krāsu korekciju -> https://packagist.org/packages/gumlet/php-image-resize
          
         $resizedPhoto   // Optimāla izmēra bilde
                         ->resizeToWidth(1200, true)   // allow_enlarge = true
