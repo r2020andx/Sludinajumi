@@ -9,11 +9,5 @@
 - Attēla samazināšana/ielāde ar vienu funkciju
 - Pieņemt tikai JPG, PNG formātus
 
-# Reitings
-- Kārtot pirmos 3 sludinājumus pēc reitinga, pārējos pēc datuma
-- Noformēt reitinga attēlošanu
-- Saglabāt reitingu pēc apstiprināta balsojuma
-- Balso tikai vienu reizi un par citu lietotāju sludinājumiem
-
 # Karte
 + Nerādīt karti, ja adrese nav atrasta API
