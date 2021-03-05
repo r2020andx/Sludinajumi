@@ -61,7 +61,7 @@
     }
 </script>
 
-<div class="modal fade" id="photoEditDialog" tabindex="-1" aria-labelledby="photoEditDialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal" id="photoEditDialog" tabindex="-1" aria-labelledby="photoEditDialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -83,7 +83,34 @@
                 </form>
             </div>
             <div class="col-md-12 col-lg-2 my-3 text-center">
-                <button class="btn btn-danger">Dzēst</button>
+                <a class="btn btn-danger" data-bs-dismiss="modal" data-bs-toggle="modal" href="#photoDeleteDialog">Dzēst</a>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="photoDeleteDialog" tabindex="-1" aria-labelledby="photoDeleteDialog" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="photoDeleteDialogTitle">Vai dzēst šo attēlu?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <img class="img-fluid" id="modalPhoto">
+        </div>
+      <div class="modal-footer">
+        <div class="row m-auto">
+            <div class="col-md-12 col-lg-10 my-3">
+                <form class="d-flex" action="/{{ $id }}" method="POST" enctype="multipart/form-data">
+                @method('PUT')
+                @csrf
+                    <input id="currentPhoto" name="currentPhoto" type="hidden" value="">
+                    <button class="btn btn-warning mx-1" id="deletePhoto" type="submit">Dzēst</button>
+                    <a class="btn btn-danger mx-1" data-bs-dismiss="modal" data-bs-toggle="modal" href="#photoEditDialog">Atcelt</a>
+                </form>
             </div>
         </div>
       </div>

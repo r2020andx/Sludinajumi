@@ -177,8 +177,8 @@ class AdController extends Controller
                 // Ielādē jauno foto
                 self::resizeAndUploadPhotos($ad->photosFolder, $request->newPhoto); 
                 $message = "Attēls saglabāts";
-
                 return redirect('/'.$id.'/edit')->with(['message' => $message]);
+
         } else {                            
                 // Ja dati nāk no teksta formas
                 $ad->make = $request->make;
@@ -212,6 +212,5 @@ class AdController extends Controller
         $message = "Sludinājums ir dzēsts";
         return redirect('/')->with(['message' => $message]);
     }
-   
-   
+  
 }
